@@ -1,37 +1,61 @@
 package rest;
 
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
 import javax.json.Json;
 import javax.json.JsonObject;
+import static javax.json.JsonValue.ValueType.NULL;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author c0683339
  */
 public class Message {
-        private int id;
+
+    /**
+     * initialization
+     */
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-DD'T'HH:mm:ss.SSSXXX");
+    private int id;
     private String title;
     private String contents;
     private String author;
-    SimpleDateFormat dt=new  SimpleDateFormat("");
+    private Date senttime;
+    SimpleDateFormat dt = new SimpleDateFormat("");
 
+    /**
+     * empty constructor
+     */
     public Message() {
-   
-    }
-      public Message(JsonObject json){ 
-      id = json.getInt("productId"); 
-         title = json.getString("name"); 
-         contents = json.getString("contents"); 
-          author= json.getString("author"); 
-     } 
 
+    }
+
+    /**
+     * json object create
+     *
+     * @param json
+     */
+    public Message(JsonObject json) {
+        id = json.getInt("id", 0);
+        title = json.getString("title", "");
+        contents = json.getString("contents", "");
+        author = json.getString("author", "");
+        String timeStr = json.getString("senttime", "");
+
+    }
+
+    /**
+     * getter and setter
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }
@@ -64,17 +88,28 @@ public class Message {
         this.author = author;
     }
 
-   
+    public Date getSenttime() {
+        return senttime;
+    }
 
-   public JsonObject toJSON() { 
-        return Json.createObjectBuilder() 
-                 .add("tId",id ) 
-                 .add("name", title) 
-                 .add("contents", contents) 
-                 .add("author",author) 
-                 .build(); 
-     } 
+    public void setSenttime(Date senttime) {
+        this.senttime = senttime;
+    }
 
-    
-    
+    /**
+     * JSONObject with Builder
+     *
+     * @return
+     */
+    public JsonObject toJSON() {
+        String timeStr = sdf.format(senttime);
+        return Json.createObjectBuilder()
+                .add("Id", id)
+                .add("title", title)
+                .add("contents", contents)
+                .add("author", author)
+                .add("senttime", timeStr)
+                .build();
+    }
+
 }
